@@ -20,7 +20,7 @@ if (is_null($controller)) {
 }
 
 $config = require __DIR__ . '/config/db.php';
-$dbh  = connectionDB($config);
+$dbh = connectionDB($config);
 
 require __DIR__ . "/controllers/{$controller}_controller.php";
-require __DIR__ . 'views/layouts/default.php';
+require __DIR__ . '/views/layouts/default.php';
