@@ -11,6 +11,7 @@
                 <th scope="col">description</th>
                 <th scope="col">created_at</th>
                 <th scope="col">deadline</th>
+                <th scope="col">executed</th>
                 <th scope="col">Handle</th>
             </tr>
             </thead>
@@ -23,6 +24,14 @@
                     <td><?php echo $value['created_at']; ?></td>
                     <td><?php echo $value['deadline']; ?></td>
                     <td>
+                        <input id="is_active" name="is_active" type="checkbox" class="form-check-input"
+                                <?php if (!empty($value['executed'])): ?>checked<?php else: ?> disabled <?php
+                                endif;?>
+                        >
+                        <label class="form-check-label" for="is_active">Статус</label>
+                    </td>
+                    <td>
+
                         <a class="btn btn-primary" href="/update?id=<?php echo $value['id']; ?>" role="button">Edit</a>
                         <a class="btn btn-danger" href="/delete?id=<?php echo $value['id']; ?>" role="button">Delete</a>
                     </td>
