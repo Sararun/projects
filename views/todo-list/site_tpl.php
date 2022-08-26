@@ -25,10 +25,9 @@
                     <td><?php echo $value['deadline']; ?></td>
                     <td>
                         <input id="is_active" name="is_active" type="checkbox" class="form-check-input"
-                                <?php if (!empty($value['executed'])): ?>checked<?php else: ?> disabled <?php
-                                endif;?>
-                        >
-                        <label class="form-check-label" for="is_active">Статус</label>
+                                <?php if (!empty($value['executed'])): ?>
+                                    checked<?php else: ?> disabled <?php
+                                endif;?>>
                     </td>
                     <td>
 
