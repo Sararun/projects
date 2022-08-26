@@ -14,13 +14,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['title'])) {
         $errors[] = 'Заполните поле название';
     }
+    if (mb_strlen($data['title']) < 5){
+        $errors[] = 'Слишком короткое название';
+    }
 
     if (mb_strlen($data['title']) > 149) {
         $errors[] = 'Слишком длинное название';
     }
 
     if (empty($data['description'])) {
-        $errors[] = 'Заполните поле опиание';
+        $errors[] = 'Заполните поле описание';
+    }
+
+    if (mb_strlen($data['description']) < 5){
+        $errors[] = 'Слишком короткое описание';
     }
 
     if (mb_strlen($data['description']) > 254) {
