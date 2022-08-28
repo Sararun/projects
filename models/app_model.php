@@ -78,7 +78,7 @@ function checkCSRF(): void
         if (!isset($_REQUEST['csrf_token']) && ($_REQUEST['csrf_token'] !== $_SESSION['_csrf'])) {
             $code = 404;
             http_response_code($code);
-            require __DIR__ . "/../Views/errors/{$code}.php";
+            require __DIR__ . "/../views/errors/{$code}.php";
             die;
         }
     }
