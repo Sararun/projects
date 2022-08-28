@@ -3,10 +3,10 @@
 return [
     [
         'url' => '#^$|^\?#',
-        'controller' => 'site',
+        'controller' => 'index',
     ],
     [
-        'url' => '#store?#',
-        'controller' => 'store',
-    ],
+        'url' => '#^api/update-status?#',
+        'controller' => 'Api/update_status',
+    ]
 ];
