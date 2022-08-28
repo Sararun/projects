@@ -26,7 +26,7 @@
                     <td>
                         <input id="is_active" name="is_active" type="checkbox" class="form-check-input"
                                 <?php if (!empty($value['executed'])): ?>
-                                    checked disabled<?php else: ?> disabled <?php
+                                    checked  <?php
                                 endif;?>>
                     </td>
                     <td>
