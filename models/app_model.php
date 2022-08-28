@@ -5,7 +5,7 @@ function dump($data): void
     echo '<pre>'; var_dump($data); echo '</pre>';
 }
 
-function connectionDB(array $config): PDO
+function connectDB(array $config): PDO
 {
     static $dbh = null;
 
