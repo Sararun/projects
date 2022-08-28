@@ -7,21 +7,21 @@ function dump($data): void
 
 function connectionDB(array $config): PDO
 {
-    static $pdo = null;
+    static $dbh = null;
 
-    if (!is_null($pdo)) {
-        return $pdo;
+    if (!is_null($dbh)) {
+        return $dbh;
     }
 
     try {
-        $pdo = new \PDO(
+        $dbh = new \PDO(
             "mysql:host={$config['host']};dbname={$config['dbname']};charset=utf8mb4",
             $config['username'],
             $config['password'],
             $config['options']
         );
 
-        return $pdo;
+        return $dbh;
     } catch (\PDOException $e) {
         die ('Error server ' . $e->getMessage());
     }
@@ -45,14 +45,17 @@ function pageNotFound(): void
     die;
 }
 
-function render(string $path, array $data = []): string
+function render(string $viewPath, array $data = []): string
 {
     extract($data);
 
-    $viewPath = __DIR__ . "/../views/todo-list/{$path}_tpl.php";
+    $viewPath = __DIR__ . "/../views/tasks/{$viewPath}_tpl.php";
 
     if (!file_exists($viewPath)) {
-        pageNotFound();
+        $code = 404;
+        http_response_code($code);
+        require __DIR__ . "/../views/errors/{$code}.php";
+        die;
     }
 
     ob_start();
@@ -73,24 +76,21 @@ function checkCSRF(): void
 {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         if (!isset($_REQUEST['csrf_token']) && ($_REQUEST['csrf_token'] !== $_SESSION['_csrf'])) {
-            pageNotFound();
+            $code = 404;
+            http_response_code($code);
+            require __DIR__ . "/../Views/errors/{$code}.php";
+            die;
         }
     }
 }
 
-function deleteCSRF(): void
+function destroyCSRF(): void
 {
-    unset($_SESSION['_csrf']);
-}
-
-function redirect(string $http = ''): void
-{
-    if ($http) {
-        $redirect = $http;
-    } else {
-        $redirect = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/';
+    //проверяем установлен ли токен
+    if (!isset($_SESSION['_csrf'])) {
+        //меняем значение токена
+        $_SESSION['_csrf'] = 'destroy';
+        //удаляем сессию токена
+        unset($_SESSION['_csrf']);
     }
-
-    header("Location: {$redirect}");
-    die;
 }
