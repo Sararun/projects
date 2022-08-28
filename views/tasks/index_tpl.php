@@ -1,37 +1,35 @@
 <div class="col-md-12">
-
-    <?php // заранее определённая переменная, чтобы интераператор не ругался
-    /** @var array $taskList */ ?>
+    <?php /** @var array $taskList */?>
     <?php if (!empty($taskList)): ?>
         <table class="table">
             <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">title</th>
-                <th scope="col">description</th>
-                <th scope="col">created_at</th>
-                <th scope="col">deadline</th>
-                <th scope="col">executed</th>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Created_at</th>
+                <th scope="col">Deadline</th>
                 <th scope="col">Handle</th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($taskList as $value): ?>
-                <tr>
+                <tr id="tr<?php echo $value['id']; ?>" class="<?php if ($value['executed']): ?>table-success<?php endif; ?>">
                     <th scope="row"><?php echo $value['id']; ?></th>
                     <td><?php echo $value['title']; ?></td>
                     <td><?php echo $value['description']; ?></td>
                     <td><?php echo $value['created_at']; ?></td>
                     <td><?php echo $value['deadline']; ?></td>
                     <td>
-                        <input id="is_active" name="is_active" type="checkbox" class="form-check-input"
-                                <?php if (!empty($value['executed'])): ?>
-                                    checked  <?php
-                                endif;?>>
+                        <div class="form-check">
+                            <input data-id="<?php echo $value['id']; ?>"
+                                   value="<?php echo $value['executed'] ?>"
+                                   class="form-check-input check_status check<?php echo $value['id']; ?>"
+                                   type="checkbox" <?php if ($value['executed']): ?>checked<?php endif; ?>>
+                        </div>
                     </td>
                     <td>
-
-                        <a class="btn btn-primary" href="/update?id=<?php echo $value['id']; ?>" role="button">Edit</a>
+                        <a class="btn btn-primary" href="/edit?id=<?php echo $value['id']; ?>" role="button">Edit</a>
                         <a class="btn btn-danger" href="/delete?id=<?php echo $value['id']; ?>" role="button">Delete</a>
                     </td>
                 </tr>
