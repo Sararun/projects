@@ -7,6 +7,22 @@ return [
     ],
     [
         'url' => '#^api/update-status?#',
-        'controller' => 'Api/update_status',
-    ]
+        'controller' => 'api/update_status',
+    ],
+    [
+        'url' => '#^store?#',
+        'controller' => 'store',
+    ],
+    [
+        'url' => '#^edit?#',
+        'controller' => 'edit',
+    ],
+    [
+        'url' => '#^update?#',
+        'controller' => 'update',
+    ],
+    [
+        'url' => '#^delete?#',
+        'controller' => 'delete',
+    ],
 ];
