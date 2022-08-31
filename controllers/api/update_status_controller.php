@@ -36,6 +36,6 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'update_status')) {
             ];
         }
     }
-
+    //Зачем это
     die (json_encode($response, JSON_UNESCAPED_UNICODE));
 }
