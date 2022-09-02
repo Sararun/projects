@@ -58,5 +58,29 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'updated')) {
 
         $columns = [];
         $params = [':id' => $id];
+
+        foreach ($data as $key => $value) {
+            if ($key === 'id') {
+                continue;
+            }
+            $columns[] = "{$key}=:{$key}";
+            $params[":{$key}"] = $value;
+        }
+
+        try {
+            $query = "UPDATE tasks SET"
+                . implode(', ', $columns)
+                . "WHERE id=:id LIMIT 1";
+            $sth = $PDODriver->prepare($query);
+            $sth->execute($params);
+        } catch (\PDOException $e) {
+            throw new PDOException("SQL: {$query}", 500);
+        }
+
+        if ($sth->rowCount() > 0) {
+            $_SESSION['success'] = 'Success';
+        } else {
+            throw new \PDOException("page not found (#404)", 404);
+        }
     }
 }
