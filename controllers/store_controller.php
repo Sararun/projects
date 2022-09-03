@@ -13,24 +13,23 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'create')) {
     $errors = [];
 
     if (empty($data['title'])) {
-        $errors[] = 'Fill in the name field';
+        $errors[] = 'Fill in the name field.';
     }
 
     if (mb_strlen($data['title']) > 150) {
-        $errors[] = 'Title must be no more than 150 characters';
-
+        $errors[] = 'Title must be no more than 150 characters.';
     }
 
     if (empty($data['description'])) {
-        $errors[] = 'Fill the description fileds';
+        $errors[] = 'Fill in the description field.';
     }
 
     if (mb_strlen($data['description']) > 250) {
-        $errors[] = 'Description must eb no more than 250 characters';
+        $errors[] = 'Description must be no more than 250 characters.';
     }
 
     if (empty($data['deadline'])) {
-        $errors[] = 'Set a due date for the task';
+        $errors[] = 'Set a due date for the task.';
     }
 
     if (!empty($errors)) {
@@ -46,7 +45,7 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'create')) {
         $data['updated_at'] = $date;
 
         $fields = implode(', ', array_keys($data));
-        $placeholders = str_repeat('? ', count($data) - 1) . '?';
+        $placeholders = str_repeat('?, ', count($data) - 1) . '?';
         $query = "INSERT INTO tasks ({$fields}) VALUES ({$placeholders})";
         $sth = $PDODriver->prepare($query);
         $sth->execute(array_values($data));
@@ -56,7 +55,8 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'create')) {
         if (!empty($lastId)) {
             $_SESSION['success'] = 'Success';
         }
-
     }
+
     redirect();
 }
+
