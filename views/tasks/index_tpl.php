@@ -16,7 +16,11 @@
             <?php foreach ($taskList as $value): ?>
                 <tr id="tr<?php echo $value['id']; ?>" class="<?php if ($value['executed']): ?>table-success<?php endif; ?>">
                     <th scope="row"><?php echo $value['id']; ?></th>
-                    <td><?php echo $value['title']; ?></td>
+                    <td>
+                        <a href="/edit?id=<?php echo $value['id']; ?>">
+                            <?php echo $value['title']; ?>
+                        </a>
+                    </td>
                     <td><?php echo $value['description']; ?></td>
                     <td><?php echo $value['created_at']; ?></td>
                     <td><?php echo $value['deadline']; ?></td>
@@ -43,16 +47,20 @@
         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['_csrf']; ?>">
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
-            <input id="title" name="title" type="text" class="form-control">
+            <input id="title" name="title"
+                   value="<?php if (!empty($_SESSION['data']['title'])): ?><?php echo $_SESSION['data']['title']; ?><?php endif; ?>"
+                   type="text" class="form-control">
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <textarea id="description" name="description" class="form-control" rows="3"></textarea>
+            <textarea id="description" name="description" class="form-control" rows="3"><?php if (!empty($_SESSION['data']['description'])): ?><?php echo $_SESSION['data']['description']; ?><?php endif; ?></textarea>
         </div>
         <div class="mb-3">
-            <label for="deadline" class="form-label">Title</label>
+            <label for="deadline" class="form-label">Deadline</label>
             <input id="deadline" name="deadline" type="datetime-local" class="form-control">
         </div>
+        <input type="hidden" name="mode" value="create">
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
+<?php unset($_SESSION['data']); ?>
