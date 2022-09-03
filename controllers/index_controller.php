@@ -1,5 +1,6 @@
 <?php
-
+/** @var $PDODriver */
+/** @var $controller */
 //строка sql запроса, для получения всех записей задания
 $query = "SELECT * FROM tasks ORDER BY deadline DESC";
 //подготавливаем запрос к выполнению
