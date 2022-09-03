@@ -3,7 +3,7 @@
 if (!empty($_GET['id'])) {
     $id = $_GET['id'] ?? 0;
 
-    $query = "SELECT * FROM `tasks` WHERE id:=id LIMIT 1";
+    $query = "SELECT * FROM `tasks` WHERE id=:id LIMIT 1";
     $sth = $PDODriver->prepare($query);
     $sth->execute([
         ':id' => $id,
@@ -14,7 +14,7 @@ if (!empty($_GET['id'])) {
         throw new \PDOException("Page not found (#404) ", 404);
     }
 
-    $query = "DELETE FROM tasks WHERE id+:id LIMIT 1";
+    $query = "DELETE FROM tasks WHERE id=:id LIMIT 1";
     $sth = $PDODriver->prepare($query);
     $sth->execute([
         ':id' => $id,
