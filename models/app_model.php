@@ -1,11 +1,22 @@
 <?php
 
-function dump($data): void
+/**
+ * функция отладки (Debug)
+ *
+ * @param $data
+ */
+function dump($data)
 {
     echo '<pre>'; var_dump($data); echo '</pre>';
 }
 
-function connectDB(array $config): PDO
+/**
+ * подключение к бд
+ *
+ * @param array $config
+ * @return PDO
+ */
+function connectDB(array $config): \PDO
 {
     static $dbh = null;
 
@@ -23,47 +34,14 @@ function connectDB(array $config): PDO
 
         return $dbh;
     } catch (\PDOException $e) {
-        die ('Error server ' . $e->getMessage());
+        throw new \PDOException("Internal Server Error: {$e->getMessage()}", 500);
     }
 }
 
-function router(string $path, array $routes): ?string
-{
-    foreach ($routes as $route) {
-        if (preg_match($route['url'], $path)) {
-            return $route['controller'];
-        }
-    }
-
-    return null;
-}
-
-function pageNotFound(): void
-{
-    http_response_code(404);
-    require __DIR__ . '/../views/errors/404.php';
-    die;
-}
-
-function render(string $viewPath, array $data = []): string
-{
-    extract($data);
-
-    $viewPath = __DIR__ . "/../views/tasks/{$viewPath}_tpl.php";
-
-    if (!file_exists($viewPath)) {
-        $code = 404;
-        http_response_code($code);
-        require __DIR__ . "/../views/errors/{$code}.php";
-        die;
-    }
-
-    ob_start();
-    include $viewPath;
-
-    return ob_get_clean();
-}
-
+/**
+ * Устанавливаем токен для защиты
+ * от межсайтовой подделки запроса
+ */
 function createCSRF(): void
 {
     if (isset($_SESSION['_csrf']) !== true) {
@@ -72,18 +50,27 @@ function createCSRF(): void
     }
 }
 
+/**
+ * проверяем подлинность токена csrf
+ * если токен не совпадает, отправляем на 404 стр.
+ */
 function checkCSRF(): void
 {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         if (!isset($_REQUEST['csrf_token']) && ($_REQUEST['csrf_token'] !== $_SESSION['_csrf'])) {
             $code = 404;
+            //устанавливаем код ответа HTTP
             http_response_code($code);
-            require __DIR__ . "/../views/errors/{$code}.php";
+            //поключаем шаблон ошибки по коду
+            require __DIR__ . "/../Views/errors/{$code}.php";
             die;
         }
     }
 }
 
+/**
+ * уничтожаем токен csrf
+ */
 function destroyCSRF(): void
 {
     //проверяем установлен ли токен
@@ -93,4 +80,50 @@ function destroyCSRF(): void
         //удаляем сессию токена
         unset($_SESSION['_csrf']);
     }
+}
+
+/**
+ * подключение шаблона вида страницы
+ * если шаблона нет, ошибка 404
+ *
+ * @param string $viewPath
+ * @param array $data
+ * @return string
+ */
+function render(string $viewPath, array $data = []): string
+{
+    //импортирует переменные из массива в текущую таблицу символов
+    extract($data);
+    //устанавливаем полный путь к виду страницы, для подключения
+    $viewPath = __DIR__ . "/../Views/tasks/{$viewPath}_tpl.php";
+    //проверяем существование указанного файла или каталога
+    //если нет подключаем 404 станицу
+    if (!file_exists($viewPath)) {
+        $code = 404;
+        //устанавливаем код ответа HTTP
+        http_response_code($code);
+        //поключаем шаблон ошибки по коду
+        require __DIR__ . "/../Views/errors/{$code}.php";
+        die;
+    }
+    //включаем буферизацию вывода
+    ob_start();
+    //подключаем шаблон вида
+    include $viewPath;
+    //получаем содержимое текущего буфера и удаляем его
+    //то есть возвращаем шаблон ввиде строки, с уже вставленными переменными,
+    //если они есть в шаблоне
+    return ob_get_clean();
+}
+
+function redirect(string $http = ''): void
+{
+    if ($http) {
+        $redirect = $http;
+    } else {
+        $redirect = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/';
+    }
+
+    header("Location: {$redirect}");
+    die;
 }
