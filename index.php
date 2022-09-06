@@ -4,7 +4,7 @@ error_reporting(-1);
 session_start();
 try {
     //подключаем главную модель
-    require __DIR__ . '/Models/app_model.php';
+    require __DIR__ . '/models/app_model.php';
 
     //устанавливаем токен для защиты запроса от подделки
     createCSRF();
@@ -46,9 +46,9 @@ try {
     $PDODriver = connectDB($config);
 
     //подключаем контроллер отвечающий за обработку http запроса
-    require __DIR__ . "/Controllers/{$controller}_controller.php";
+    require __DIR__ . "/controllers/{$controller}_controller.php";
     //подключаем основной шаблон клиента
-    require __DIR__ . "/Views/layouts/default.php";
+    require __DIR__ . "/views/layouts/default.php";
 } catch (Exception $e) {
     $code = $e->getCode() ?? 404;
     //устанавливаем код ответа HTTP
@@ -58,6 +58,6 @@ try {
     $userAgent = $_SERVER['HTTP_USER_AGENT'];
     $error = date('d.m.Y H:i:s') . "|{$e->getMessage()}|$ip|$userAgent\n";
     file_put_contents(__DIR__ . '/error.txt', $error, FILE_APPEND);
-    require __DIR__ . "/Views/errors/{$code}.php";
+    require __DIR__ . "/views/errors/{$code}.php";
     die;
 }
