@@ -2,11 +2,9 @@
 declare(strict_types=1);
 error_reporting(-1);
 session_start();
-
-
 try {
     //подключаем главную модель
-    require __DIR__ . '/models/app_model.php';
+    require __DIR__ . '/Models/app_model.php';
 
     //устанавливаем токен для защиты запроса от подделки
     createCSRF();
@@ -19,28 +17,27 @@ try {
     //разбирает URL и возвращает его компоненты
     //[path] => / [query] => id=1
     $partsPath = parse_url($url);
+    $stringPath = $partsPath['path'] ?? '';
 
-    //подключаем роуты
-    $routes = require __DIR__ . '/config/routes.php';
-    $controller = '';
-    foreach ($routes as $route) {
-        //проверяем на совпадение урл с роутами
-        if (preg_match($route['url'], $partsPath['path'])) {
-            //если совпадение найдено прерываем цикл
-            //и записываем имя контроллера в переменную
-            $controller = $route['controller'];
-            break;
+    //подключаме роуты
+    if (empty($_SESSION['user'])) {
+        $controller = 'login';
+    } else {
+        $routes = require __DIR__ . '/config/routes.php';
+        $controller = '';
+        foreach ($routes as $route) {
+            //проверяем на совпадение урл с роутами
+            if (preg_match($route['url'], $stringPath)) {
+                //если совпадение найдено прерываем цикл
+                //и записываем имя контроллера в переменную
+                $controller = $route['controller'];
+                break;
+            }
         }
     }
-
     //если контроллер не найден, тогда 404 ошибка
     if (empty($controller)) {
-        $code = 404;
-        //устанавливаем код ответа HTTP
-        http_response_code($code);
-        //поключаем шаблон ошибки по коду
-        require __DIR__ . "/мiews/errors/{$code}.php";
-        die;
+        throw new \PDOException("Page not found (#404) ", 404);
     }
 
     //подключаем конфиг бд и считываем массив в переменную
@@ -49,10 +46,18 @@ try {
     $PDODriver = connectDB($config);
 
     //подключаем контроллер отвечающий за обработку http запроса
-    require __DIR__ . "/controllers/{$controller}_controller.php";
+    require __DIR__ . "/Controllers/{$controller}_controller.php";
     //подключаем основной шаблон клиента
-    require __DIR__ . "/views/layouts/default.php";
+    require __DIR__ . "/Views/layouts/default.php";
 } catch (Exception $e) {
-    //вывод ошибок
-    die ($e->getMessage());
+    $code = $e->getCode() ?? 404;
+    //устанавливаем код ответа HTTP
+    http_response_code((int)$code);
+    //подключаем шаблон ошибки по коду
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $userAgent = $_SERVER['HTTP_USER_AGENT'];
+    $error = date('d.m.Y H:i:s') . "|{$e->getMessage()}|$ip|$userAgent\n";
+    file_put_contents(__DIR__ . '/error.txt', $error, FILE_APPEND);
+    require __DIR__ . "/Views/errors/{$code}.php";
+    die;
 }
