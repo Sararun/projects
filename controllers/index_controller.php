@@ -69,7 +69,12 @@ if (!empty($filter) && ($filter == 1)) {
 
 
 //строка sql запроса, для получения всех записей задания
-$query = "SELECT * FROM tasks ORDER BY deadline DESC";
+$query = "SELECT t.*, u.username
+FROM tasks t
+JOIN users u 
+ON u.id=t.user_id
+{$where}
+ORDER BY t.deadline DESC";
 //подготавливаем запрос к выполнению
 //и возвращаем связанный с этим запросом объект
 $sth = $PDODriver->prepare($query);
@@ -77,6 +82,14 @@ $sth = $PDODriver->prepare($query);
 $sth->execute();
 //возвращает массив, содержащий все записи в бд
 $taskList = $sth->fetchAll();
+
+if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] == 1)) {
+    $query = "SELECT id, username FROM users ORDER BY id DESC";
+    $sth = $PDODriver->prepare($query);
+    $sth->execute();
+    $users = $sth->fetchAll();
+}
+
 //подключаем рендер и передаем массив
 //записей в подключаемый вид для подстановке в шаблоне
 $content = render($controller, [
