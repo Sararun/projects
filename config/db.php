@@ -2,7 +2,7 @@
 
 return [
     'host' => 'localhost',
-    'dbname' => 'to-do-list',
+    'dbname' => 'db-vlad-projects',
     'username' => 'root',
     'password' => 'root',
     'options' => [

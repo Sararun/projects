@@ -7,7 +7,7 @@ return [
     ],
     [
         'url' => '#^api/update-status?#',
-        'controller' => 'api/update_status',
+        'controller' => 'Api/update_status',
     ],
     [
         'url' => '#^store?#',
@@ -24,5 +24,21 @@ return [
     [
         'url' => '#^delete?#',
         'controller' => 'delete',
+    ],
+    [
+        'url' => '#^register?#',
+        'controller' => 'register',
+    ],
+    [
+        'url' => '#^login?#',
+        'controller' => 'login',
+    ],
+    [
+        'url' => '#^logout?#',
+        'controller' => 'logout',
+    ],
+    [
+        'url' => '#^success_register?#',
+        'controller' => 'success_register',
     ],
 ];

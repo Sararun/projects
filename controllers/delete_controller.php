@@ -1,5 +1,6 @@
 <?php
 /** @var $PDODriver */
+
 if (!empty($_GET['id'])) {
     $id = $_GET['id'] ?? 0;
 
@@ -10,7 +11,7 @@ if (!empty($_GET['id'])) {
     ]);
     $item = $sth->fetch();
 
-    if(empty($item)) {
+    if (empty($item)) {
         throw new \PDOException("Page not found (#404) ", 404);
     }
 
@@ -21,10 +22,11 @@ if (!empty($_GET['id'])) {
     ]);
 
     if ($sth->rowCount() > 0) {
-        $_SESSION['success'] = 'Успешно удалено';
+        $_SESSION['success'] = 'Успешно удалено.';
     } else {
-        $_SESSION['error'] = 'Ошибка удаления';
+        $_SESSION['error'] = 'Ошибка удаления.';
     }
+
     redirect();
 } else {
     throw new \PDOException("Page not found (#404) ", 404);
