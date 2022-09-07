@@ -32,6 +32,7 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'update_status')) {
         $sth->execute([
             ':id' => $id,
             ':executed' => $executed,
+            ':lead_time' => $leadTime,
         ]);
         //проверяем кол-во строк затронутых последим запросом
         //если больше 1, в нашем случае 1, тогда создаем массив
@@ -40,6 +41,7 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'update_status')) {
             $response = [
                 'error' => false,
                 'value' => $executed,
+                'lead_time' => $leadTime,
             ];
         }
     }
