@@ -13,13 +13,14 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'login')) {
     }
 
     $errors = [];
-
+    //Валидация мейла
     if (empty($user['email'])) {
         $errors['empty_email'] = 'Заполните поле email' . PHP_EOL;
     } elseif (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['error_email'] = 'Некорректный email' . PHP_EOL;
     }
 
+    //Валидация пароля
     if (empty($user['password'])) {
         $errors['empty_password'] = 'Заполните поле пароль' . PHP_EOL;
     } elseif (preg_match("#^\d+$#", $user['password'])) {
@@ -32,6 +33,7 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'login')) {
 
     $redirect = 'login';
 
+    //Проверка полей на уровне входа в профиль
     if (!empty($errors)) {
         $_SESSION['any'] = $errors;
     } else {
@@ -47,7 +49,8 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'login')) {
             $userData = $sth->fetch();
             if (!password_verify($user['password'], $userData['password'])) {
                 $_SESSION['error'] = 'Email/Пароль введены не верно.';
-            } {
+            }
+            {
                 unset($userData['password']);
                 $_SESSION['user'] = $userData;
                 $redirect = '/';
