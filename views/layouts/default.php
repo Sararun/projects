@@ -14,13 +14,26 @@
 <div class="container">
     <div class="wrapper">
         <?php require __DIR__ . '/../blocks/_navbar.php'; ?>
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Library</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Data</li>
+            </ol>
+        </nav>
+
         <?php require __DIR__ . '/../blocks/_alert.php'; ?>
+
         <div class="row">
             <?php echo $content; ?>
         </div>
     </div>
     <?php require __DIR__ . '/../blocks/_footer.php'; ?>
 </div>
+<script>
+    var isRole = <?php echo $_SESSION['user']['role']; ?>;
+</script>
 <script src="/assets/js/jquery-1.12.4.min.js"></script>
 <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="/assets/js/script.js"></script>
