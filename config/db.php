@@ -1,5 +1,5 @@
 <?php
-
+//Подключение бд
 return [
     'host' => 'localhost',
     'dbname' => 'db-vlad-projects',
