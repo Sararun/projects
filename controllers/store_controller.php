@@ -39,7 +39,7 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'create')) {
             'description' => $data['description'] ?? null,
         ];
     } else {
-        $data['user_id'] = 1;
+        $data['user_id'] = $data['user_id'] ?? $_SESSION['user']['id'];
         $date = date('Y-m-d H:i:s');
         $data['created_at'] = $date;
         $data['updated_at'] = $date;

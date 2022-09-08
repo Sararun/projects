@@ -61,8 +61,8 @@ function checkCSRF(): void
             $code = 404;
             //устанавливаем код ответа HTTP
             http_response_code($code);
-            //поключаем шаблон ошибки по коду
-            require __DIR__ . "/../Views/errors/{$code}.php";
+            //подключаем шаблон ошибки по коду
+            require __DIR__ . "/../views/errors/{$code}.php";
             die;
         }
     }
@@ -95,7 +95,7 @@ function render(string $viewPath, array $data = []): string
     //импортирует переменные из массива в текущую таблицу символов
     extract($data);
     //устанавливаем полный путь к виду страницы, для подключения
-    $viewPath = __DIR__ . "/../Views/tasks/{$viewPath}_tpl.php";
+    $viewPath = __DIR__ . "/../views/tasks/{$viewPath}_tpl.php";
     //проверяем существование указанного файла или каталога
     //если нет подключаем 404 станицу
     if (!file_exists($viewPath)) {
@@ -103,7 +103,7 @@ function render(string $viewPath, array $data = []): string
         //устанавливаем код ответа HTTP
         http_response_code($code);
         //поключаем шаблон ошибки по коду
-        require __DIR__ . "/../Views/errors/{$code}.php";
+        require __DIR__ . "/../views/errors/{$code}.php";
         die;
     }
     //включаем буферизацию вывода

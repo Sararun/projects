@@ -14,6 +14,19 @@
                 <?php endif; ?>
                    type="text" class="form-control">
         </div>
+        <?php if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] == 1)): ?>
+            <div class="mb-3">
+                <label for="title" class="form-label">Users</label>
+                <select name="user_id" class="form-select" aria-label="Default select example">
+                    <?php /** @var array $users */?>
+                    <?php foreach ($users as $value): ?>
+                        <option value="<?php echo $value['id']; ?>">
+                            <?php echo $value['username']; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        <?php endif; ?>
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
             <textarea id="description" name="description" class="form-control" rows="3"><?php if (empty($_SESSION['data']['description'])): ?><?php echo $item['description']; ?><?php else: ?><?php echo $_SESSION['data']['description']; ?><?php endif; ?></textarea>

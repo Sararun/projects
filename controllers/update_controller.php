@@ -53,7 +53,7 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'updated')) {
         }
 
         $data['id'] = $id;
-        $data['user_id'] = 1;
+        $data['user_id'] = $data['user_id'] ?? $_SESSION['user']['id'];
         $data['updated_at'] = date('Y-m-d H:i:s');
 
         $columns = [];
