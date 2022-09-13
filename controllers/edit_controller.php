@@ -1,7 +1,8 @@
 <?php
 /** @var  $PDODriver */
 /** @var $controller */
-$id = $_GET['id'] ?? 0;
+
+$taskId = $_GET['id'] ?? 0;
 
 $where = 'WHERE id=:id';
 $params = [':id' => $taskId];
@@ -25,11 +26,12 @@ if (empty($item)) {
 //Если user не пустой или это админ, то вывод пользователей
 if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] == 1)) {
     $query = "SELECT id, username FROM users ORDER BY id DESC";
+    $sth = $PDODriver->prepare($query);
     $sth->execute();
     $users = $sth->fetchAll();
 }
 
-$content = render($controller, [
+$content = render("/tasks/$controller", [
     'item' => $item,
     'users' => $users ?? [],
 ]);

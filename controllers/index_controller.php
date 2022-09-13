@@ -2,13 +2,13 @@
 /** @var $PDODriver */
 /** @var $controller */
 
-$where = ' WHERE 1';
-$params = [];
+$whereQuery = $whereCount =  ' WHERE 1';
+$paramsQuery = [];
 
-if (!empty($_SESSION['user']) && $_SESSION['user']['role'] == 2) {
+if ($_SESSION['user']['role'] == 2) {
     $userId = $_SESSION['user']['id'];
     $params[':user_id'] = $userId;
-    $where .= " AND t.user_id=:user_id";
+    $whereQuery .= " AND t.user_id=:user_id";
 }
 
 $search = $_GET['search'] ?? null;
@@ -19,62 +19,44 @@ $search = $_GET['search'] ?? null;
 if (!empty($search) && (mb_strlen($search) >= 3)) {
     $search = htmlspecialchars(strip_tags(trim($search)));
     $search = "%{$search}%";
-    $where .= " AND t.title LIKE '{$search}' OR t.description LIKE '{$search}' ";
-} elseif (!empty($search)) {
-    $_SESSION['error'] = 'Слишком короткий запрос';
+    $whereQuery .= " AND t.title LIKE '{$search}' OR t.description LIKE '{$search}' ";
+} elseif (isset($_GET['search_value']) && $_GET['search_value'] == 1) {
+    $_SESSION['error'] = 'Введите поисковой запрос';
 }
 
 $filter = $_GET['filter'] ?? null;
-//Если в поле фильтр что-то есть
-if (!empty($filter) && ($filter == 1)) {
-    $filterData = [];
-    foreach ($_GET as $key => $value) {
-        $filterData[$key] = htmlspecialchars(strip_tags(trim($value)));
-    }
-    /*
-     * Дальше идёт код сравнивающий с
-     * фильтром и select в базу c существующим параметром
-     */
-    if (!empty($filterData['username'])) {
-        $title = "%{$filterData['username']}%";
-        $where .= " AND u.username LIKE '{$title}'";
-    }
+$builderQuery = builderQueryData($filter);
 
-    if (!empty($filterData['username'])) {
-        $title = "%{$filterData['username']}%";
-        $where .= " AND u.username LIKE '{$title}'";
-    }
+$whereQuery .= $builderQuery . " ORDER BY t.deadline DESC";
 
-    if (!empty($filterData['title'])) {
-        $title = "%{$filterData['description']}%";
-        $where .= " AND t.description LIKE '{$description}'";
-    }
+$page = $_GET['page'];//Кол-во страниц на выход
+$perPage = 5;
 
-    if (!empty($filterData['executed'])) {
-        $executed = ($filterData['executed'] == 1) ? 1 : 0;
-        $executed = "%{$executed}%";
-        $where .= "AND t.executed LIKE '{$executed}'";
-    }
+$totalPage = getTasksCount($paramsQuery, $whereQuery);//Кол-во всех записей
+$countPages = ceil($totalPage / $perPage) ?:1; //Округление дроби в большую сторону
 
-    if (!empty($filterData['date_from'])) {
-        $dateFrom = date('Y-m-d', strtotime($filterData['date_from']));
-        $where .= " AND DATE(t.created_at)>='$dateFrom'";
-    }
+if ($page > $countPages) {
+    $page = $countPages;
+}
+//вычитаем -1 так как берём с 0
+$limit = ($page-1) * $perPage;
+$offset = $perPage;
 
-    if (!empty($filterData['date_to'])) {
-        $dateTo = date('Y-m-d', strtotime($filterData['date_to']));
-        $where .= " AND DATE(t,deadline)<='{$dateTo}'";
-    }
+$whereQuery .= "LIMIT {$limit}, {offset}";
+
+$paginator = paginator($page, $countPages);
+$taskList = getAllTasks($whereQuery, $paramsQuery);
+
+if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] == 1)) {
+    $_SESSION['user']['role'] = 1;
+    $query = "SELECT id, username FROM users ORDER BY id DESC";
+    $sth = $PDODriver->prepare($query);
+    $sth->execute();
+    $users = $sth->fetchAll();
 }
 
 
-//строка sql запроса, для получения всех записей задания
-$query = "SELECT t.*, u.username
-FROM tasks t
-JOIN users u 
-ON u.id=t.user_id
-{$where}
-ORDER BY t.deadline DESC";
+
 //подготавливаем запрос к выполнению
 //и возвращаем связанный с этим запросом объект
 $sth = $PDODriver->prepare($query);
@@ -92,6 +74,10 @@ if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] == 1)) {
 
 //подключаем рендер и передаем массив
 //записей в подключаемый вид для подстановке в шаблоне
-$content = render($controller, [
+
+
+$content = render("/tasks/{$currentController}", [
     'taskList' => $taskList,
+    'users' =>  $users ?? [],
+    'paginator' => $paginator,
 ]);
