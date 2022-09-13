@@ -1,6 +1,6 @@
 <?php
 /** @var $PDODriver */
-/** @var $controller */
+/** @var $currentController */
 
 if (!empty($_POST['mode']) && ($_POST['mode'] === 'register')) {
     $user = [];
@@ -93,4 +93,4 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'register')) {
 
 //подключаем рендер и передаем массив
 //записей в подключаемый вид для подстановке в шаблоне
-$content = render("/auth/{$controller}");
+$content = render("/auth/{$currentController}");
