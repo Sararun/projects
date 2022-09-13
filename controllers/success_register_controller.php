@@ -1,14 +1,11 @@
 <?php
-/** @var $controller */
+/** @var $currentController */
 
 if (empty($_SESSION['success_register'])) {
     $code = 404;
-    //устанавливаем код ответа HTTP
-    http_response_code($code);
-    //подключаем шаблон ошибки по коду
-    require __DIR__ . "/../views/errors/{$code}.php";
-    die;
+    //устанавливаем код ответа HTTP и подключаем шаблон ошибки по код
+    dispatchNotFound($code);
 }
 
-//записей в подключаемый вид для подстановке в шаблоне
-$content = render("/auth/{$controller}");
+//записываем в подключаемый вид для подстановки в шаблон
+$content = render("/auth/{$currentController}");
