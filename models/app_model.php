@@ -72,7 +72,7 @@ function checkCSRF(): void
 }
 
 /**
- * уничтожаем токен csrf
+ * Уничтожаем токен csrf
  */
 function destroyCSRF(): void
 {
@@ -86,7 +86,7 @@ function destroyCSRF(): void
 }
 
 /**
- * подключение шаблона вида страницы
+ * Подключение шаблона вида страницы
  * если шаблона нет, ошибка 404
  *
  * @param string $viewPath
@@ -104,17 +104,14 @@ function render(string $viewPath, array $data = []): string
     if (!file_exists($viewPath)) {
         $code = 404;
         //устанавливаем код ответа HTTP
-        http_response_code($code);
-        //поключаем шаблон ошибки по коду
-        require __DIR__ . "/../views/errors/{$code}.php";
-        die;
+        dispatchNotFound($code);
     }
     //включаем буферизацию вывода
     ob_start();
     //подключаем шаблон вида
     include $viewPath;
     //получаем содержимое текущего буфера и удаляем его
-    //то есть возвращаем шаблон ввиде строки, с уже вставленными переменными,
+    //то-есть возвращаем шаблон в виде строки, с уже вставленными переменными,
     //если они есть в шаблоне
     return ob_get_clean();
 }
