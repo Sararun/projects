@@ -127,3 +127,66 @@ function redirect(string $http = ''): void
     header("Location: {$redirect}");
     die;
 }
+
+//пагинация
+function paginator($page, $countPages)
+{
+    $back = null;
+    $forward = null;
+    $startPage = null;
+    $endPage = null;
+    $page2Left = null;
+    $page1Left = null;
+    $page2Right = null;
+    $page1Right = null;
+    $path = null;
+    $uri = '?';
+
+    $url = trim($_SERVER['REQUEST_URI'], '/');
+    $url = explode('?', $url);
+    $path = $url[0];
+    /*
+     * Если хоть что есть на втором месте массива и если param не страница,
+     * то закидывать в uri
+     */
+    if (!empty($url[1])) {
+        $params = explode('&', $url[1]);
+        foreach ($params as $param) {
+            if (!preg_match("#page=#", $param)) {
+                $uri .= "{$param}&amp;";
+            }
+        }
+    }
+    //Логика разбиения на страницы
+    if ($page > 1) {
+        $back = "<li class=\"page-item\"><a class=\"page-link\" href=\"/{$path}{$uri}page=" . ($page - 1) . "\">&lt;</a></li>";
+    }
+    if ($page < $countPages) {
+        $forward = "<li class=\"page-item\"><a class=\"page-link\" href=\"/{$path}{$uri}page=" . ($page + 1) . "\">&gt;</a></li>";
+    }
+    if ($page > 3) {
+        $startPage = "<li class=\"page-item\"><a class=\"page-link\" href=\"/{$path}{$uri}page=1\">&laquo;</a></li>";
+    }
+    if ($page < ($countPages - 2)) {
+        $endPage = "<li class=\"page-item\"><a class=\"page-link\" href=\"/{$path}{$uri}page={$countPages}\">&raquo;</a></li>";
+    }
+    if ($page - 2 > 0) {
+        $page2Left = "<li class=\"page-item\"><a class=\"page-link\" href=\"/{$path}{$uri}page=" . ($page - 2) . "\">" . ($page - 2) . "</a></li>";
+    }
+    if ($page - 1 > 0) {
+        $page1Left = "<li class=\"page-item\"><a class=\"page-link\" href=\"/{$path}{$uri}page=" . ($page - 1) . "\">" . ($page - 1) . "</a></li>";
+    }
+    if ($page + 1 <= $countPages) {
+        $page1Right = "<li class=\"page-item\"><a class=\"page-link\" href=\"/{$path}{$uri}page=" . ($page + 1) . "\">" . ($page + 1) . "</a></li>";
+    }
+    if ($page + 2 <= $countPages) {
+        $page2Right = "<li class=\"page-item\"><a class=\"page-link\" href=\"/{$path}{$uri}page=" . ($page + 2) . "\">" . ($page + 2) . "</a></li>";
+    }
+    //Логика вывода на страницы
+    return $startPage . $back . $page2Left . $page2Right
+        . "  <li class=\"page-item active\" aria-current=\"page\">
+              <span class=\"page-link\">{$page}</span>
+            </li>"
+        . $page1Right . $page2Right . $forward . $endPage;
+
+}
