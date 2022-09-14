@@ -19,6 +19,9 @@
                     <div class="card-body">
                         Internal Server Error (#500)
                         <hr>
+                        <?php /** @var Exception $e */?>
+                        <?php echo $e->getMessage();?>
+                        <hr>
                         <a href="/">Back</a>
                     </div>
                 </div>
