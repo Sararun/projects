@@ -145,7 +145,7 @@ function paginator($page, $countPages)
     $url = trim($_SERVER['REQUEST_URI'], '/');
     $url = explode('?', $url);
     $path = $url[0];
-    if (isset($url[1]) && $url[1] != '') {
+    if (!empty($url)) {
         $params = explode('&', $url[1]);
         foreach ($params as $param) {
 
