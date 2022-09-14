@@ -2,6 +2,7 @@
 declare(strict_types=1);
 error_reporting(-1);
 session_start();
+//входный файл
 try {
     //подключаем главную модель
     require __DIR__ . '/models/app_model.php';
