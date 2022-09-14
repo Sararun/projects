@@ -245,3 +245,19 @@ function builderQueryData(?string $filter): string
     }
     return $whereQuery;
 }
+
+/** Вывод всех записей
+ * @param array $params
+ * @param string $where
+ * @return int
+ */
+function getTasksCount(array $params, string $where): int
+{
+    $query = "SELECT id FROM tasks t {$where}";
+    $PDODriver = connectDB();
+    $sth = $PDODriver->prepare($query);
+    $sth->execute($params);
+    $totalPage = $sth->rowCount();//кол-во всех записей
+
+    return $totalPage;
+}
