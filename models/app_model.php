@@ -1,5 +1,6 @@
 <?php
 
+use JetBrains\PhpStorm\NoReturn;
 /**
  * функция отладки (Debug)
  *
@@ -13,10 +14,9 @@ function dump($data)
 /**
  * подключение к бд
  *
- * @param array $config
  * @return PDO
  */
-function connectDB(array $config): \PDO
+function connectDB(): \PDO
 {
     static $dbh = null;
 
@@ -25,6 +25,8 @@ function connectDB(array $config): \PDO
     }
 
     try {
+        //подключаем конфиг бд и считываем массив в переменную
+        $config = require  __DIR__ . '/../config/db.php';
         $dbh = new \PDO(
             "mysql:host={$config['host']};dbname={$config['dbname']};charset=utf8mb4",
             $config['username'],
@@ -51,25 +53,26 @@ function createCSRF(): void
 }
 
 /**
- * проверяем подлинность токена csrf
+ * Проверяем подлинность токена csrf
  * если токен не совпадает, отправляем на 404 стр.
  */
 function checkCSRF(): void
 {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-        if (!isset($_REQUEST['csrf_token']) && ($_REQUEST['csrf_token'] !== $_SESSION['_csrf'])) {
+        if (!isset($_REQUEST['csrf_token'])) {
             $code = 404;
-            //устанавливаем код ответа HTTP
-            http_response_code($code);
-            //подключаем шаблон ошибки по коду
-            require __DIR__ . "/../views/errors/{$code}.php";
-            die;
+            //устанавливаем код ответа HTTP и подключаем шаблон ошибки по код
+            dispatchNotFound($code);
+        } elseif ($_REQUEST['csrf_token'] !== $_SESSION['_csrf']) {
+            $code = 404;
+            //устанавливаем код ответа HTTP и подключаем шаблон ошибки по код
+            dispatchNotFound($code);
         }
     }
 }
 
 /**
- * уничтожаем токен csrf
+ * Уничтожаем токен csrf
  */
 function destroyCSRF(): void
 {
@@ -83,7 +86,7 @@ function destroyCSRF(): void
 }
 
 /**
- * подключение шаблона вида страницы
+ * Подключение шаблона вида страницы
  * если шаблона нет, ошибка 404
  *
  * @param string $viewPath
@@ -95,23 +98,20 @@ function render(string $viewPath, array $data = []): string
     //импортирует переменные из массива в текущую таблицу символов
     extract($data);
     //устанавливаем полный путь к виду страницы, для подключения
-    $viewPath = __DIR__ . "/../views/tasks/{$viewPath}_tpl.php";
+    $viewPath = __DIR__ . "/../views/{$viewPath}_tpl.php";
     //проверяем существование указанного файла или каталога
     //если нет подключаем 404 станицу
     if (!file_exists($viewPath)) {
         $code = 404;
         //устанавливаем код ответа HTTP
-        http_response_code($code);
-        //поключаем шаблон ошибки по коду
-        require __DIR__ . "/../views/errors/{$code}.php";
-        die;
+        dispatchNotFound($code);
     }
     //включаем буферизацию вывода
     ob_start();
     //подключаем шаблон вида
     include $viewPath;
     //получаем содержимое текущего буфера и удаляем его
-    //то есть возвращаем шаблон ввиде строки, с уже вставленными переменными,
+    //то-есть возвращаем шаблон в виде строки, с уже вставленными переменными,
     //если они есть в шаблоне
     return ob_get_clean();
 }
