@@ -128,7 +128,12 @@ function redirect(string $http = ''): void
     die;
 }
 
-//пагинация
+/** Пагинация
+ * @param $page
+ * @param $countPages
+ * @return string
+ *
+ */
 function paginator($page, $countPages)
 {
     $back = null;
@@ -183,7 +188,7 @@ function paginator($page, $countPages)
         $page2Right = "<li class=\"page-item\"><a class=\"page-link\" href=\"/{$path}{$uri}page=" . ($page + 2) . "\">" . ($page + 2) . "</a></li>";
     }
     //Логика вывода на страницы
-    return $startPage . $back . $page2Left . $page2Right
+    return $startPage . $back . $page2Left . $page1Left
         . "  <li class=\"page-item active\" aria-current=\"page\">
               <span class=\"page-link\">{$page}</span>
             </li>"
@@ -197,4 +202,46 @@ function dispatchNotFound(int $code): void
     http_response_code((int)$code);
     require __DIR__ . "/../Views/errors/{$code}.php";
     die;
+}
+
+/** Фильтр
+ * @param string|null $filter
+ * @return string
+ */
+function builderQueryData(?string $filter): string
+{
+    $whereQuery = '';
+    if (!empty($filter)) {
+        $filterData = [];
+        foreach ($_GET as $key => $value) {
+            $filterData[$key] = htmlspecialchars(strip_tags(trim($value)));
+        }
+
+        if (!empty($filterData['title'])) {
+            $title = "%{$filterData['title']}%";
+            $whereQuery .= "AND t.title LIKE '{$title}'";
+        }
+
+        if (!empty($filterData['description'])) {
+            $description = "%{$filterData['description']}%";
+            $whereQuery .= " AND t.description LIKE '{$description}'";
+        }
+
+        if (!empty($filterData['executed'])) {
+            $executed = ($filterData['executed'] == 1) ? 1 : 0;
+            $executed = "%{$executed}%";
+            $whereQuery .= " AND t.executed LIKE '{$executed}'";
+        }
+
+        if (!empty($filterData['date_from'])) {
+            $dateFrom = date('Y-m-d', strtotime($filterData['date_from']));
+            $whereQuery .= " AND DATE(t.created_at)>='{$dateFrom}'";
+        }
+
+        if (!empty($filterData['date_to'])) {
+            $dateTo = date('Y-m-d', strtotime($filterData['date_to']));
+            $whereQuery .= " AND DATE(t.deadline)<='{$dateTo}'";
+        }
+    }
+    return $whereQuery;
 }
