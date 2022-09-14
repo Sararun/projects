@@ -261,3 +261,28 @@ function getTasksCount(array $params, string $where): int
 
     return $totalPage;
 }
+
+/** Получение всех записей
+ * @param $where
+ * @param $params
+ * @return array|null
+ */
+function getAllTasks($where, $params): ?array
+{
+    //строка sql запроса, для получения всех записей задания
+    $query = "SELECT t.*, u.username 
+	FROM tasks t 
+	JOIN users u 
+	ON u.id=t.user_id
+	{$where}";
+
+    $PDODriver = connectDB();
+    //подготавливаем запрос к выполнению
+    //и возвращаем связанный с этим запросом объект
+    $sth = $PDODriver->prepare($query);
+    //запускаем подготовленный запрос на выполнение
+    $sth->execute($params);
+    //возвращает массив, содержащий все записи в бд
+    $taskList = $sth->fetchAll();
+    return $taskList !== false ? $taskList : null;
+}
