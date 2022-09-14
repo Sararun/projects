@@ -26,12 +26,16 @@
                         </li>
                     <?php endif; ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout?out=1">Logout</a>
+                        <form action="/logout?out=1" method="post">
+                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['_csrf']; ?>">
+                            <button type="submit" class="btn nav-link">Logout</button>
+                        </form>
                     </li>
                 <?php endif; ?>
             </ul>
             <?php if (!empty($_SESSION['user'])): ?>
                 <form method="get" class="d-flex">
+                    <input type="hidden" name="search_value" value="1">
                     <input id="search" name="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
