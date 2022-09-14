@@ -127,3 +127,29 @@ function redirect(string $http = ''): void
     header("Location: {$redirect}");
     die;
 }
+
+//пагинация
+function paginator($page, $countPages)
+{
+    $back = null;
+    $forward = null;
+    $startPage = null;
+    $endPage = null;
+    $page2Left = null;
+    $page1Left = null;
+    $page2Right = null;
+    $page1Right = null;
+    $path = null;
+    $uri = '?';
+
+    $url = trim($_SERVER['REQUEST_URI'], '/');
+    $url = explode('?', $url);
+    $path = $url[0];
+    if (isset($url[1]) && $url[1] != '') {
+        $params = explode('&', $url[1]);
+        foreach ($params as $param) {
+
+        }
+    }
+
+}
