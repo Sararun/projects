@@ -190,3 +190,11 @@ function paginator($page, $countPages)
         . $page1Right . $page2Right . $forward . $endPage;
 
 }
+#[NoReturn]
+function dispatchNotFound(int $code): void
+{
+    //устанавливаем код ответа HTTP
+    http_response_code((int)$code);
+    require __DIR__ . "/../Views/errors/{$code}.php";
+    die;
+}
