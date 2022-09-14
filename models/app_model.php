@@ -246,7 +246,7 @@ function builderQueryData(?string $filter): string
     return $whereQuery;
 }
 
-/** Вывод всех записей
+/** Количество всех записей
  * @param array $params
  * @param string $where
  * @return int
