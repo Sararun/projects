@@ -128,7 +128,12 @@ function redirect(string $http = ''): void
     die;
 }
 
-//пагинация
+/** Пагинация
+ * @param $page
+ * @param $countPages
+ * @return string
+ *
+ */
 function paginator($page, $countPages)
 {
     $back = null;
@@ -183,10 +188,101 @@ function paginator($page, $countPages)
         $page2Right = "<li class=\"page-item\"><a class=\"page-link\" href=\"/{$path}{$uri}page=" . ($page + 2) . "\">" . ($page + 2) . "</a></li>";
     }
     //Логика вывода на страницы
-    return $startPage . $back . $page2Left . $page2Right
+    return $startPage . $back . $page2Left . $page1Left
         . "  <li class=\"page-item active\" aria-current=\"page\">
               <span class=\"page-link\">{$page}</span>
             </li>"
         . $page1Right . $page2Right . $forward . $endPage;
 
+}
+#[NoReturn]
+function dispatchNotFound(int $code): void
+{
+    //устанавливаем код ответа HTTP
+    http_response_code((int)$code);
+    require __DIR__ . "/../Views/errors/{$code}.php";
+    die;
+}
+
+/** Фильтр
+ * @param string|null $filter
+ * @return string
+ */
+function builderQueryData(?string $filter): string
+{
+    $whereQuery = '';
+    if (!empty($filter)) {
+        $filterData = [];
+        foreach ($_GET as $key => $value) {
+            $filterData[$key] = htmlspecialchars(strip_tags(trim($value)));
+        }
+
+        if (!empty($filterData['title'])) {
+            $title = "%{$filterData['title']}%";
+            $whereQuery .= "AND t.title LIKE '{$title}'";
+        }
+
+        if (!empty($filterData['description'])) {
+            $description = "%{$filterData['description']}%";
+            $whereQuery .= " AND t.description LIKE '{$description}'";
+        }
+
+        if (!empty($filterData['executed'])) {
+            $executed = ($filterData['executed'] == 1) ? 1 : 0;
+            $executed = "%{$executed}%";
+            $whereQuery .= " AND t.executed LIKE '{$executed}'";
+        }
+
+        if (!empty($filterData['date_from'])) {
+            $dateFrom = date('Y-m-d', strtotime($filterData['date_from']));
+            $whereQuery .= " AND DATE(t.created_at)>='{$dateFrom}'";
+        }
+
+        if (!empty($filterData['date_to'])) {
+            $dateTo = date('Y-m-d', strtotime($filterData['date_to']));
+            $whereQuery .= " AND DATE(t.deadline)<='{$dateTo}'";
+        }
+    }
+    return $whereQuery;
+}
+
+/** Количество всех записей
+ * @param array $params
+ * @param string $where
+ * @return int
+ */
+function getTasksCount(array $params, string $where): int
+{
+    $query = "SELECT id FROM tasks t {$where}";
+    $PDODriver = connectDB();
+    $sth = $PDODriver->prepare($query);
+    $sth->execute($params);
+    $totalPage = $sth->rowCount();//кол-во всех записей
+
+    return $totalPage;
+}
+
+/** Получение всех записей
+ * @param $where
+ * @param $params
+ * @return array|null
+ */
+function getAllTasks($where, $params): ?array
+{
+    //строка sql запроса, для получения всех записей задания
+    $query = "SELECT t.*, u.username 
+	FROM tasks t 
+	JOIN users u 
+	ON u.id=t.user_id
+	{$where}";
+
+    $PDODriver = connectDB();
+    //подготавливаем запрос к выполнению
+    //и возвращаем связанный с этим запросом объект
+    $sth = $PDODriver->prepare($query);
+    //запускаем подготовленный запрос на выполнение
+    $sth->execute($params);
+    //возвращает массив, содержащий все записи в бд
+    $taskList = $sth->fetchAll();
+    return $taskList !== false ? $taskList : null;
 }
