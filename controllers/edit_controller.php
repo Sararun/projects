@@ -1,6 +1,6 @@
 <?php
 /** @var  $PDODriver */
-/** @var $controller */
+/** @var $currentController */
 
 $taskId = $_GET['id'] ?? 0;
 
@@ -31,7 +31,7 @@ if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] == 1)) {
     $users = $sth->fetchAll();
 }
 
-$content = render("/tasks/$controller", [
+$content = render("/tasks/$currentController", [
     'item' => $item,
     'users' => $users ?? [],
 ]);
