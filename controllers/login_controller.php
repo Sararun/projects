@@ -2,7 +2,7 @@
 /** @var $PDODriver */
 /** @var $currentController */
 
-if (!empty($_POST['mode']) && ($_POST['mode'] === 'login')) {
+if ($_POST['mode'] === 'login') {
     $user = [];
     foreach ($_POST as $key => $value) {
         if ($key === 'csrf_token' || $key === 'mode') {
