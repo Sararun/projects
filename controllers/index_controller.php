@@ -7,7 +7,7 @@ $paramsQuery = [];
 
 if ($_SESSION['user']['role'] == 2) {
     $userId = $_SESSION['user']['id'];
-    $params[':user_id'] = $userId;
+    $paramsQuery[':user_id'] = $userId;
     $whereQuery .= " AND t.user_id=:user_id";
 }
 
@@ -29,7 +29,7 @@ $builderQuery = builderQueryData($filter);
 
 $whereQuery .= $builderQuery . " ORDER BY t.deadline DESC";
 
-$page = $_GET['page'];//Кол-во страниц на выход
+$page = $_GET['page'] ?? 1;//Кол-во страниц на выход
 $perPage = 5;
 
 $totalPage = getTasksCount($paramsQuery, $whereQuery);//Кол-во всех записей
@@ -48,7 +48,6 @@ $paginator = paginator($page, $countPages);
 $taskList = getAllTasks($whereQuery, $paramsQuery);
 
 if ($_SESSION['user']['role'] == 1) {
-    $_SESSION['user']['role'] = 1;
     $query = "SELECT id, username FROM users ORDER BY id DESC";
     $sth = $PDODriver->prepare($query);
     $sth->execute();
