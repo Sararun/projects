@@ -42,7 +42,7 @@ if ($page > $countPages) {
 $limit = ($page-1) * $perPage;
 $offset = $perPage;
 
-$whereQuery .= "LIMIT {$limit}, {offset}";
+$whereQuery .= " LIMIT {$limit}, {$offset}";
 
 $paginator = paginator($page, $countPages);
 $taskList = getAllTasks($whereQuery, $paramsQuery);
@@ -55,7 +55,6 @@ if ($_SESSION['user']['role'] == 1) {
 }
 
 
-
 //подготавливаем запрос к выполнению
 //и возвращаем связанный с этим запросом объект
 $sth = $PDODriver->prepare($query);
@@ -64,17 +63,8 @@ $sth->execute();
 //возвращает массив, содержащий все записи в бд
 $taskList = $sth->fetchAll();
 
-if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] == 1)) {
-    $query = "SELECT id, username FROM users ORDER BY id DESC";
-    $sth = $PDODriver->prepare($query);
-    $sth->execute();
-    $users = $sth->fetchAll();
-}
-
 //подключаем рендер и передаем массив
 //записей в подключаемый вид для подстановке в шаблоне
-
-
 $content = render("/tasks/{$currentController}", [
     'taskList' => $taskList,
     'users' =>  $users ?? [],
