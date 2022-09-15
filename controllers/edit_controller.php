@@ -31,7 +31,7 @@ if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] == 1)) {
     $users = $sth->fetchAll();
 }
 
-$content = render("/tasks/$currentController", [
+$content = render("/tasks/{$currentController}", [
     'item' => $item,
     'users' => $users ?? [],
 ]);
