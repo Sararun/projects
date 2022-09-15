@@ -49,8 +49,7 @@ if ($_POST['mode'] === 'login') {
             $userData = $sth->fetch();
             if (!password_verify($user['password'], $userData['password'])) {
                 $_SESSION['error'] = 'Email/Пароль введены не верно.';
-            }
-            {
+            } else {
                 unset($userData['password']);
                 $_SESSION['user'] = $userData;
                 $redirect = '/';
