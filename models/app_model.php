@@ -121,7 +121,7 @@ function redirect(string $http = ''): void
     if ($http) {
         $redirect = $http;
     } else {
-        $redirect = $_SERVER['HTTP_REFERER'] ?? '/';
+        $redirect =  isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/';
     }
 
     header("Location: {$redirect}");
@@ -219,7 +219,7 @@ function builderQueryData(?string $filter): string
 
         if (!empty($filterData['title'])) {
             $title = "%{$filterData['title']}%";
-            $whereQuery .= "AND t.title LIKE '{$title}'";
+            $whereQuery .= " AND t.title LIKE '{$title}'";
         }
 
         if (!empty($filterData['description'])) {
