@@ -121,7 +121,7 @@ function redirect(string $http = ''): void
     if ($http) {
         $redirect = $http;
     } else {
-        $redirect = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/';
+        $redirect = $_SERVER['HTTP_REFERER'] ?? '/';
     }
 
     header("Location: {$redirect}");
