@@ -121,7 +121,7 @@ function redirect(string $http = ''): void
     if ($http) {
         $redirect = $http;
     } else {
-        $redirect = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/';
+        $redirect = $_SERVER['HTTP_REFERER'] ?? '/';
     }
 
     header("Location: {$redirect}");
@@ -200,7 +200,7 @@ function dispatchNotFound(int $code): void
 {
     //устанавливаем код ответа HTTP
     http_response_code((int)$code);
-    require __DIR__ . "/../Views/errors/{$code}.php";
+    require __DIR__ . "/../views/errors/{$code}.php";
     die;
 }
 

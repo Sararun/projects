@@ -2,7 +2,7 @@
 /** @var $PDODriver */
 /** @var $currentController */
 
-if (!empty($_POST['mode']) && ($_POST['mode'] === 'login')) {
+if ($_POST['mode'] === 'login') {
     $user = [];
     foreach ($_POST as $key => $value) {
         if ($key === 'csrf_token' || $key === 'mode') {
@@ -49,8 +49,7 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'login')) {
             $userData = $sth->fetch();
             if (!password_verify($user['password'], $userData['password'])) {
                 $_SESSION['error'] = 'Email/Пароль введены не верно.';
-            }
-            {
+            } else {
                 unset($userData['password']);
                 $_SESSION['user'] = $userData;
                 $redirect = '/';

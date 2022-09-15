@@ -1,8 +1,8 @@
 <?php
 /** @var $PDODriver */
 
-if (!empty($_POST['mode']) && ($_POST['mode'] === 'create')) {
-    $_POST['mode'] = 'create';
+if ($_POST['mode'] === 'create') {
+
     $data = [];
     foreach ($_POST as $key => $value) {
         if (in_array($key, ['csrf_token', 'mode'])) {

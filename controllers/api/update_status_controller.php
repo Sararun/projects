@@ -1,7 +1,7 @@
 <?php
 
 //проверяем откуда пришел запрос
-if (!empty($_POST['mode']) && ($_POST['mode'] === 'update_status')) {
+if ($_POST['mode'] === 'update_status') {
     //очищаем данные от тегов, html и тд
     $id = htmlspecialchars(strip_tags(trim($_POST['id'])));
     $value = htmlspecialchars(strip_tags(trim($_POST['value'])));
@@ -18,9 +18,9 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'update_status')) {
 
         //строка запроса sql
         $query = "UPDATE tasks SET 
-                 executed=:executed,
-                 lead_time=:lead_time
-                 WHERE id=:id LIMIT 1";
+        executed=:executed,
+        lead_time=:lead_time
+        WHERE id=:id LIMIT 1";
         //подготавливаем запрос к выполнению
         //и возвращаем связанный с этим запросом объект
         $sth = $PDODriver->prepare($query);
@@ -28,6 +28,7 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'update_status')) {
         $leadTime = ($executed)
             ? date('Y-m-d H:i:s')
             : null;
+
         //запускаем подготовленный запрос на выполнение
         $sth->execute([
             ':id' => $id,
