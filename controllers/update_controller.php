@@ -1,7 +1,7 @@
 <?php
 /** @var $PDODriver */
 
-if (!empty($_POST['mode']) && ($_POST['mode'] === 'updated')) {
+if ($_POST['mode'] === 'updated') {
     $data = [];
     foreach ($_POST as $key => $value) {
         if (in_array($key, ['csrf_token', 'mode'])) {
