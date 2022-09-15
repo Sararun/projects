@@ -37,7 +37,7 @@ try {
     }
 
     //если контроллер не найден, тогда 404 ошибка
-    if (empty($controller)) {
+    if (empty($currentController)) {
         throw new \PDOException("Page not found (#404) ", 404);
     }
 
