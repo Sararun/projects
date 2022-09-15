@@ -1,6 +1,6 @@
 <?php
 /** @var $PDODriver */
-/** @var $controller */
+/** @var $currentController */
 
 $whereQuery = $whereCount =  ' WHERE 1';
 $paramsQuery = [];
@@ -47,7 +47,7 @@ $whereQuery .= "LIMIT {$limit}, {offset}";
 $paginator = paginator($page, $countPages);
 $taskList = getAllTasks($whereQuery, $paramsQuery);
 
-if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] == 1)) {
+if ($_SESSION['user']['role'] == 1) {
     $_SESSION['user']['role'] = 1;
     $query = "SELECT id, username FROM users ORDER BY id DESC";
     $sth = $PDODriver->prepare($query);
