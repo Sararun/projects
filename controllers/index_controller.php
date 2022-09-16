@@ -2,7 +2,7 @@
 /** @var $PDODriver */
 /** @var $currentController */
 
-$whereQuery = $whereCount =  ' WHERE 1';
+$whereQuery = $whereCount = ' WHERE 1';
 $paramsQuery = [];
 
 if ($_SESSION['user']['role'] == 2) {
@@ -39,10 +39,10 @@ if ($page > $countPages) {
     $page = $countPages;
 }
 //вычитаем -1 так как берём с 0
-$limit = ($page-1) * $perPage;
+$limit = ($page - 1) * $perPage;
 $offset = $perPage;
 
-$whereQuery .= "LIMIT {$limit}, {offset}";
+$whereQuery .= " LIMIT {$limit}, {$offset}";
 
 $paginator = paginator($page, $countPages);
 $taskList = getAllTasks($whereQuery, $paramsQuery);
@@ -54,27 +54,8 @@ if ($_SESSION['user']['role'] == 1) {
     $users = $sth->fetchAll();
 }
 
-
-
-//подготавливаем запрос к выполнению
-//и возвращаем связанный с этим запросом объект
-$sth = $PDODriver->prepare($query);
-//запускаем подготовленный запрос на выполнение
-$sth->execute();
-//возвращает массив, содержащий все записи в бд
-$taskList = $sth->fetchAll();
-
-if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] == 1)) {
-    $query = "SELECT id, username FROM users ORDER BY id DESC";
-    $sth = $PDODriver->prepare($query);
-    $sth->execute();
-    $users = $sth->fetchAll();
-}
-
 //подключаем рендер и передаем массив
 //записей в подключаемый вид для подстановке в шаблоне
-
-
 $content = render("/tasks/{$currentController}", [
     'taskList' => $taskList,
     'users' =>  $users ?? [],

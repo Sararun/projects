@@ -40,10 +40,10 @@ if ($_POST['mode'] === 'create') {
             'description' => $data['description'] ?? null,
         ];
     } else {
-        $data['user_id'] = $data['user_id'] ?? $_SESSION['user']['id'];
         $date = date('Y-m-d H:i:s');
         $data['created_at'] = $date;
         $data['updated_at'] = $date;
+        $data['user_id'] = $data['user_id'] ?? $_SESSION['user']['id'];
 
         $fields = implode(', ', array_keys($data));
         $placeholders = str_repeat('?, ', count($data) - 1) . '?';
@@ -54,7 +54,7 @@ if ($_POST['mode'] === 'create') {
         $lastId = $PDODriver->lastInsertId();
 
         if (!empty($lastId)) {
-            $_SESSION['success'] = 'Success';
+            $_SESSION['success'] = 'Успешно сохранено.';
         }
     }
 

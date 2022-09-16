@@ -11,7 +11,7 @@ $params = [':id' => $taskId];
 if (!empty($_SESSION['user']) && $_SESSION['user']['role'] == 2) {
     $userId = $_SESSION['user']['id'];
     $params[':user_id'] = $userId;
-    $where .= "AND user_id=:user_id";
+    $where .= " AND user_id=:user_id";
 }
 
 $query = "SELECT * FROM `tasks` {$where} LIMIT 1";
@@ -23,8 +23,8 @@ if (empty($item)) {
     throw new \PDOException("Page not found (#404) ", 404);
 }
 
-//Если user не пустой или это админ, то вывод пользователей
-if (!empty($_SESSION['user']) && ($_SESSION['user']['role'] == 1)) {
+//Если user админ, то вывод пользователей
+if ($_SESSION['user']['role'] == 1) {
     $query = "SELECT id, username FROM users ORDER BY id DESC";
     $sth = $PDODriver->prepare($query);
     $sth->execute();
