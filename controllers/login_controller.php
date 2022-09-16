@@ -16,20 +16,13 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'login')) {
     confirmDataEmail($user, $errors);
     confirmDataPassword($user,$errors );
 
-
-
-
     $redirect = 'login';
 
     //Проверка полей на уровне входа в профиль
     if (!empty($errors)) {
         $_SESSION['any'] = $errors;
     } else {
-        $query = "SELECT * FROM users WHERE email=:email LIMIT 1";
-        $sth = $PDODriver->prepare($query);
-        $sth->execute([
-            ':email' => $user['email'],
-        ]);
+        selectIdUsers($user);
 
         if ($sth->rowCount() === 0) {
             $_SESSION['error'] = 'Email/Пароль введены не верно.';

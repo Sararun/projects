@@ -22,11 +22,7 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'register')) {
     if (!empty($errors)) {
         $_SESSION['any'] = $errors;
     } else {
-        $query = "SELECT id FROM users WHERE email=:email LIMIT 1";
-        $sth = $PDODriver->prepare($query);
-        $sth->execute([
-            ':email' => $user['email'],
-        ]);
+        selectIdUsers($user);
         if ($sth->rowCount() > 0) {
             $_SESSION['error'] = 'Пользователь с такие email уже зарегистрирован.';
         } else {
