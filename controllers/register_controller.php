@@ -14,37 +14,8 @@ if (!empty($_POST['mode']) && ($_POST['mode'] === 'register')) {
 
     $errors = [];
 
-    if (empty($user['username'])) {
-        $errors['empty_name'] = 'Заполните поле имя' . PHP_EOL;
-    } elseif (preg_match("#[^а-яёa-z]#ui", $user['username'])) {
-        $errors['symbol_name'] = 'Имя содержит недопустимые символы' . PHP_EOL;
-    } elseif (mb_strlen($user['username']) < 3) {
-        $errors['length_name'] = 'Имя содержит менее 3 символов' . PHP_EOL;
-    }
-
-    if (empty($user['email'])) {
-        $errors['empty_email'] = 'Заполните поле email' . PHP_EOL;
-    } elseif (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors['error_email'] = 'Некорректный email' . PHP_EOL;
-    }
-
-    if (empty($user['password'])) {
-        $errors['empty_password'] = 'Заполните поле пароль' . PHP_EOL;
-    } elseif (preg_match("#^\d+$#", $user['password'])) {
-        $errors['number_password'] = 'Пароль не должен содержать только цифры' . PHP_EOL;
-    } elseif (preg_match("#[^a-z0-9]#ui", $user['password'])) {
-        $errors['symbol_password'] = 'Пароль содержит недопустимые символы' . PHP_EOL;
-    } elseif (strlen($user['password']) <= 5) {
-        $errors['length_password'] = 'Пароль содержит менее 5 символов' . PHP_EOL;
-    }
-
-    if (empty($user['password_confirm'])) {
-        $errors['empty_password_confirm'] = 'Заполните поле подтверждение пароля' . PHP_EOL;
-    }
-
-    if ($user['password'] !== $user['password_confirm']) {
-        $errors['length_password'] = 'Пароли не совпадают' . PHP_EOL;
-    }
+    confirmDataEmail($user, $errors);
+    confirmDataPassword($user,$errors );
 
     $redirect = 'register';
 
