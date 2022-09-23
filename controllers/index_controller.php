@@ -47,12 +47,7 @@ $whereQuery .= " LIMIT {$limit}, {$offset}";
 $paginator = paginator($page, $countPages);
 $taskList = getAllTasks($whereQuery, $paramsQuery);
 
-if ($_SESSION['user']['role'] == 1) {
-    $query = "SELECT id, username FROM users ORDER BY id DESC";
-    $sth = $PDODriver->prepare($query);
-    $sth->execute();
-    $users = $sth->fetchAll();
-}
+role1();
 
 //подключаем рендер и передаем массив
 //записей в подключаемый вид для подстановке в шаблоне

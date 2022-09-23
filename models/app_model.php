@@ -286,3 +286,98 @@ function getAllTasks($where, $params): ?array
     $taskList = $sth->fetchAll();
     return $taskList !== false ? $taskList : null;
 }
+
+function confirmDataEmail($user, $errors): ?array
+{
+    //Валидация мейла
+    if (empty($user['email'])) {
+        $errors['empty_email'] = 'Заполните поле email' . PHP_EOL;
+    } elseif (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors['error_email'] = 'Некорректный email' . PHP_EOL;
+    }
+    return $errors;
+}
+
+function confirmDataPassword($user, $errors): ?array
+{
+    //Валидация пароля
+    if (empty($user['password'])) {
+        $errors['empty_password'] = 'Заполните поле пароль' . PHP_EOL;
+    } elseif (preg_match("#^\d+$#", $user['password'])) {
+        $errors['number_password'] = 'Пароль не должен содержать только цифры' . PHP_EOL;
+    } elseif (preg_match("#[^a-z0-9]#ui", $user['password'])) {
+        $errors['symbol_password'] = 'Пароль содержит недопустимые символы' . PHP_EOL;
+    } elseif (strlen($user['password']) <= 5) {
+        $errors['length_password'] = 'Пароль содержит менее 5 символов' . PHP_EOL;
+    }
+    return $errors;
+}
+
+function validFields($data, $errors): ?array
+{
+    if (empty($data['title'])) {
+        $errors[] = 'Fill in the name field.';
+    }
+
+    if (mb_strlen($data['title']) > 150) {
+        $errors[] = 'Title must be no more than 150 characters.';
+    }
+
+    if (empty($data['description'])) {
+        $errors[] = 'Fill in the description field.';
+    }
+
+    if (mb_strlen($data['description']) > 250) {
+        $errors[] = 'Description must be no more than 250 characters.';
+    }
+
+    if (empty($data['deadline'])) {
+        $errors[] = 'Set a due date for the task.';
+    }
+    return $errors;
+}
+
+
+function role1()
+{
+    //Если user админ, то вывод пользователей
+    if ($_SESSION['user']['role'] == 1) {
+        $query = "SELECT id, username FROM users ORDER BY id DESC";
+        $sth = $PDODriver->prepare($query);
+        $sth->execute();
+        $users = $sth->fetchAll();
+    }
+    return $users;
+}
+
+/**
+ * @param $user
+ * @return array
+ */
+function selectIdUsers($user)
+{
+    $query = "SELECT id FROM users WHERE email=:email LIMIT 1";
+    $sth = $PDODriver->prepare($query);
+    $sth->execute([
+        ':email' => $user['email'],
+    ]);
+    return [$user, $sth];
+}
+
+/**
+ * @param $params
+ * @param $where
+ * @return mixed
+ */
+function selectTasks($params, $where)
+{
+    $query = "SELECT * FROM `tasks` {$where} LIMIT 1";
+    $sth = $PDODriver->prepare($query);
+    $sth->execute($params);
+    $item = $sth->fetch();
+
+    if (empty($item)) {
+        throw new \PDOException("Page not found (#404) ", 404);
+    }
+    return $item;
+}

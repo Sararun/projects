@@ -2,7 +2,7 @@
 /** @var $PDODriver */
 /** @var $currentController */
 
-if ($_POST['mode'] === 'login') {
+if (!empty($_POST['mode']) && ($_POST['mode'] === 'login')) {
     $user = [];
     foreach ($_POST as $key => $value) {
         if ($key === 'csrf_token' || $key === 'mode') {
@@ -13,23 +13,8 @@ if ($_POST['mode'] === 'login') {
     }
 
     $errors = [];
-    //Валидация мейла
-    if (empty($user['email'])) {
-        $errors['empty_email'] = 'Заполните поле email' . PHP_EOL;
-    } elseif (!filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors['error_email'] = 'Некорректный email' . PHP_EOL;
-    }
-
-    //Валидация пароля
-    if (empty($user['password'])) {
-        $errors['empty_password'] = 'Заполните поле пароль' . PHP_EOL;
-    } elseif (preg_match("#^\d+$#", $user['password'])) {
-        $errors['number_password'] = 'Пароль не должен содержать только цифры' . PHP_EOL;
-    } elseif (preg_match("#[^a-z0-9]#ui", $user['password'])) {
-        $errors['symbol_password'] = 'Пароль содержит недопустимые символы' . PHP_EOL;
-    } elseif (strlen($user['password']) <= 5) {
-        $errors['length_password'] = 'Пароль содержит менее 5 символов' . PHP_EOL;
-    }
+    confirmDataEmail($user, $errors);
+    confirmDataPassword($user,$errors );
 
     $redirect = 'login';
 
@@ -37,11 +22,7 @@ if ($_POST['mode'] === 'login') {
     if (!empty($errors)) {
         $_SESSION['any'] = $errors;
     } else {
-        $query = "SELECT * FROM users WHERE email=:email LIMIT 1";
-        $sth = $PDODriver->prepare($query);
-        $sth->execute([
-            ':email' => $user['email'],
-        ]);
+        selectIdUsers($user);
 
         if ($sth->rowCount() === 0) {
             $_SESSION['error'] = 'Email/Пароль введены не верно.';
@@ -61,5 +42,5 @@ if ($_POST['mode'] === 'login') {
 }
 
 //подключаем рендер и передаем массив
-//записей в подключаемый вид для подстановке в шаблоне
+//записей в подключаемый вид для подстановки в шаблоне
 $content = render("/auth/{$currentController}");

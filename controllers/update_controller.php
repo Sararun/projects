@@ -12,25 +12,7 @@ if ($_POST['mode'] === 'updated') {
 
     $errors = [];
 
-    if (empty($data['title'])) {
-        $errors[] = 'Fill in the name field.';
-    }
-
-    if (mb_strlen($data['title']) > 150) {
-        $errors[] = 'Title must be no more than 150 characters.';
-    }
-
-    if (empty($data['description'])) {
-        $errors[] = 'Fill in the description field.';
-    }
-
-    if (mb_strlen($data['description']) > 250) {
-        $errors[] = 'Description must be no more than 250 characters.';
-    }
-
-    if (empty($data['deadline'])) {
-        $errors[] = 'Set a due date for the task.';
-    }
+    validFields($data, $errors);
 
     $id = $_GET['id'] ?? 0;
 
